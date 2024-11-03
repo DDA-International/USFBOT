@@ -15,14 +15,20 @@ module.exports = {
             }
             let channel = interaction.options.getChannel('channel') ?? interaction.channel;
             let reason = interaction.options.getString('reason') ?? 'No reason provided';
-            const LockMessage = new EmbedBuilder()
-            	.setColor(0xff0000)
-            	.setTitle('This channel has been locked!')
-            	.setDescription(`Locked for reason: ${reason}`)
-            	.setFooter({text: 'You are not muted, this channel is locked for everyone. Please don\'t DM people.'});
-            channel.permissionOverwrites.edit(interaction.guild.id, { SendMessages: false, AddReactions: false, SendMessagesInThreads: false, CreatePublicThreads: false, CreatePrivateThreads: false });
-            interaction.editReply({content: `Successfully locked ${channel}`, ephemeral: true});
-            channel.send({embeds: [LockMessage]});
+            try {
+                const LockMessage = new EmbedBuilder()
+                    .setColor(0xff0000)
+                    .setTitle('This channel has been locked!')
+                    .setDescription(`Locked for reason: ${reason}`)
+                    .setFooter({text: 'You are not muted, this channel is locked for everyone. Please don\'t DM people.'});
+                channel.permissionOverwrites.edit(interaction.guild.id, { SendMessages: false, AddReactions: false, SendMessagesInThreads: false, CreatePublicThreads: false, CreatePrivateThreads: false });
+                interaction.editReply({content: `Successfully locked ${channel}`, ephemeral: true});
+                channel.send({embeds: [LockMessage]});
+            } catch (e) {
+                const { erbed } = require('../embeds/embeds.js')
+                erbed.setFooter({ text: `${error}`})
+                return interaction.editReply({ embeds: [erbed] })
+            }
         } else {
             interaction.editReply({content: `You don't have the required permission to run this command!`, ephemeral: true});
         }

@@ -10,8 +10,8 @@ module.exports = {
         const helpEmbed = new EmbedBuilder()
         	.setColor(0x0000ff)
         	.setTitle('USFBot Informations')
-        	.setDescription('**Bot Prefix:** `/`\n**Terms of Service:** [`Link`](https://github.com/USF-Team/USFBOT/blob/main/Terms.md)\n**Privacy Policy:** [`Link`](https://github.com/USF-Team/USFBOT/blob/main/Privacy.md)\n**Support Server:** [`Link`](https://discord.gg/qbJ8szzMhv)\n**Commands List:** [`Link`](https://github.com/USF-Team/USFBOT/blob/main/Commands.md)\n**Organization Website:** [`Link`](https://usfteam.pages.dev/)\n**Status Page:** [`Link`](https://usf.instatus.com/)\n**Invite Link:** [`Link`](https://discord.com/oauth2/authorize?client_id=1090240246005907466)')
-        	.setThumbnail('https://cdn.discordapp.com/icons/1086638377534754897/1f9299b5fcc56efdba49f1caddd02550.webp?size=2048')
+        	.setDescription('**Bot Prefix:** `/`\n**Terms of Service:** [`Link`](https://github.com/DDA-International/USFBOT/blob/main/Terms.md)\n**Privacy Policy:** [`Link`](https://github.com/DDA-International/USFBOT/blob/main/Privacy.md)\n**Support Server:** [`Link`](https://discord.gg/dV7Hwz7D64)\n**Commands List:** [`Link`](https://github.com/DDA-International/USFBOT/blob/main/Commands.md)\n**Organization Website:** [`Link`](https://dda.pages.dev/)\n**Status Page:** [`Link`](https://dda.instatus.com/)\n**Invite Link:** [`Link`](https://discord.com/oauth2/authorize?client_id=1090240246005907466)')
+        	.setThumbnail('https://cdn.discordapp.com/avatars/1090240246005907466/ee1ff1b9bec6271d833dece3222b587b.webp?size=2048')
         	.setFooter({text: `Requested by ${user.username}`, iconURL: `${user.displayAvatarURL({size:32})}`})
         	.setTimestamp();
         const Discord = new ButtonBuilder()

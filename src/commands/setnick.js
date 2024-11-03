@@ -17,7 +17,8 @@ module.exports = {
         const moderated = new EmbedBuilder()
             .setColor(0x00ff00)
             .setDescription('Nickname Successfully Changed!');
-        const member = interaction.options.getMember('target');
+        const target = interaction.options.getMember('target');
+        const member = await interaction.guild.members.fetch(target.user.id)
         const reason = interaction.options.getString('reason') ?? 'No Reason Provided';
         const notify = interaction.options.getBoolean('notify') ?? false;
         if (interaction.guild.ownerId===member.id) {
@@ -38,7 +39,9 @@ module.exports = {
             return interaction.editReply({embeds: [moderated], ephemeral: true})
         } catch (error) {
             console.log(error)
-            return interaction.editReply({content: 'There was an error while trying to execute this command', ephemeral: true});
+            const { erbed } = require('../embeds/embeds.js')
+            erbed.setFooter({ text: `${error}`})
+            return interaction.editReply({ embeds: [erbed] })
         }
     },
 };

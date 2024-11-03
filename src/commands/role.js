@@ -1,4 +1,11 @@
 const { EmbedBuilder, SlashCommandBuilder } = require('discord.js');
+function YesNo (parameter) {
+	if (parameter) {
+		return 'Yes';
+	} else {
+		return 'No';
+	}
+}
 //
 module.exports={
     data: new SlashCommandBuilder().setName('role').setDescription('Get Role Informations')
@@ -10,16 +17,19 @@ module.exports={
         const rolePos = interaction.guild.roles.cache.size - role.position;
         const rolbed = new EmbedBuilder()
             .setTitle(`${role.name} Role Informations`)
-            .setDescription(`**Mention:** \`<@&${role.id}>\``)
+            .setDescription(`**Mention:** \`<@&${role.id}>\` | **ID:** \`${role.id}\``)
             .addFields(
-                { name: 'Role ID', value: `${role.id}`, inline: true },
                 { name: 'Role Created Date', value: `<t:${Math.floor(role.createdTimestamp/1000)}:F>`, inline: true },
+                { name: 'Role Hoisted', value: `${YesNo(role.hoist)}`, inline: true },
                 { name: '\u200B', value: '\u200B' },
                 { name: 'Role Position', value: `${rolePos}`, inline: true },
                 { name: 'Role HEX Color', value: `${role.hexColor}`, inline: true },
                 { name: 'Role Mentionable', value: `${role.mentionable}`, inline: true },
             )
             .setColor(role.hexColor);
+        if (role.icon) {
+            rolbed.setThumbnail(role.iconURL({ size: 2048 }));
+        }
         return interaction.editReply({embeds: [rolbed]});
     },
 };

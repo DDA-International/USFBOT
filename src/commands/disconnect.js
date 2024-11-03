@@ -8,7 +8,8 @@ module.exports = {
         .setDMPermission(false),
     async execute(interaction) {
         await interaction.deferReply({ ephemeral: true })
-        const target = interaction.options.getMember('target')
+        const member = interaction.options.getMember('target')
+        const target = await interaction.guild.members.fetch(member.user.id)
         const reason = interaction.options.getString('reason') ?? `No Reason Provided`
         let disconnected = new EmbedBuilder();
         if (interaction.member.permissions.has(PermissionsBitField.Flags.MoveMembers)) {

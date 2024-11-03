@@ -20,9 +20,7 @@ module.exports = {
     let gibiru = 'https://gibiru.com/results.html?q='
     let yandex = 'https://yandex.com/search/?text='
     let lilo = 'https://search.lilo.org/?q='
-    let url = 'https://letmegooglethat.com/?q=';
     const src = search.replaceAll(' ', "+")
-    url = url+src;
     googleurl = googleurl+src;
     duckurl += src;
     ecosiaurl += src;
@@ -38,7 +36,7 @@ module.exports = {
       .setColor(0x00ffff)
       .setAuthor({ name: `Requested by ${interaction.user.username}`, iconURL: `${interaction.user.displayAvatarURL({size:32})}` })
       .setTitle('Search Links')
-      .setDescription(`- [${search}](${googleurl}) • Google \n- [${search}](${ecosiaurl}) • Ecosia \n- [${search}](${duckurl}) • DuckDuckGo\n- [${search}](${braveurl}) • Brave \n- [${search}](${bingurl}) • Bing \n- [${search}](${yahoourl}) • Yahoo\n- [${search}](${qwanturl}) • Qwant \n- [${search}](${swisscows}) • Swisscows \n- [${search}](${gibiru}) • Gibiru\n- [${search}](${yandex}) • Yandex \n- [${search}](${lilo}) • Lilo \n- [${search}](${url}) • LMGTFY `)
+      .setDescription(`- <:google:1266016555662184606> [${search}](${googleurl}) • Google \n- <:ecosia:1266017707766055045> [${search}](${ecosiaurl}) • Ecosia \n- <:duckduckgo:1266021571508572261> [${search}](${duckurl}) • DuckDuckGo\n- <:brave:1266017410109149287> [${search}](${braveurl}) • Brave \n- <:bing:1266020917314850907> [${search}](${bingurl}) • Bing \n- <:yahoo:1266019185100718155> [${search}](${yahoourl}) • Yahoo\n- <:qwant:1266021495981998172> [${search}](${qwanturl}) • Qwant \n- <:swisscows:1266020983651958785> [${search}](${swisscows}) • Swisscows \n- <:gibiru:1266020402749247581> [${search}](${gibiru}) • Gibiru\n- <:yandex:1266020634484539515> [${search}](${yandex}) • Yandex \n- <:lilo:1266019331301576754> [${search}](${lilo}) • Lilo`)
       .setTimestamp();
    	if (interaction.guild) {
         embed.setThumbnail(`${interaction.guild.iconURL({ size: 2048 }) }`);

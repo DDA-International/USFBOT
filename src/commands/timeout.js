@@ -11,7 +11,8 @@ module.exports = {
     	.setDMPermission(false),
     async execute(interaction) {
         await interaction.deferReply({ ephemeral: true });
-        const target = interaction.options.getMember('target');
+        const member = interaction.options.getMember('target');
+        const target = await interaction.guild.members.fetch(member.user.id)
         let errorcase = new EmbedBuilder()
             .setTitle('Could not Timeout the user')
             .setDescription('TimeoutUser');
@@ -26,8 +27,9 @@ module.exports = {
                     target.timeout(temp, `${interaction.user.username}: ${reason}`);
                 } catch (error) {
                     console.error(error);
-                    errorcase.setDescription(`An unexpected error happened while trying to run this command!\n Please try again later and if the issue persists, report the issue in our [Discord Server](${discord})`)
-                    return interaction.editReply({embeds: [errorcase], ephemeral: true});
+                    const { erbed } = require('../embeds/embeds.js')
+                    erbed.setFooter({ text: `${error}`})
+                    return interaction.editReply({ embeds: [erbed] })
                 }
                 try {
                     target.send(`You have been timed out in **${interaction.guild.name}** for ${time} | ${reason}`);

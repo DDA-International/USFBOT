@@ -19,8 +19,28 @@ const commands = [
                 "name": "reason",
                 "description": "Reason of the moderation",
                 "type": 3,
+                "max_length": 200,
                 "required": "false"
             }
+        ]
+    },
+    {
+        "name": "announce",
+        "description": "Send an Announcement through the bot",
+        "dm_permission": "false",
+        options: [
+            {
+                "name": "channel",
+                "description": "Announcement Channel",
+                "type": 7,
+                "required": "false"
+            },
+            {
+                "name": "mention",
+                "description": "Role/Member to mention",
+                "type": 9,
+                "required": "false"
+            },
         ]
     },
     {
@@ -40,19 +60,73 @@ const commands = [
     },
     {
         "name": "ban",
-        "description": "Ban an user",
+        "description": "Ban a Member",
         "dm_permission": "false",
         options: [
             {
                 "name": "target",
-                "description": "The user to ban",
+                "description": "Member to Ban",
                 "type": 6,
                 "required": "true"
             },
             {
                 "name": "reason",
-                "description": "Reason of the ban",
+                "description": "Ban Reason",
                 "type": 3,
+                "max_length": 200,
+                "required": "false"
+            }
+        ]
+    },
+    {
+        "name": "channel",
+        "description": "Get information about a channel",
+        "dm_permission": "false",
+        options: [
+            {
+                "name": "channel",
+                "description": "The channel to get information about",
+                "type": 7,
+                "required": "true"
+            }
+        ]
+    },
+    {
+        "name": "deafen",
+        "description": "Deafen a Member",
+        "dm_permission": "false",
+        options: [
+            {
+                "name": "target",
+                "description": "Member to deafen",
+                "type": 6,
+                "required": "true"
+            },
+            {
+                "name": "reason",
+                "description": "Deafen reason",
+                "type": 3,
+                "max_length": 200,
+                "required": "false"
+            }
+        ]
+    },
+    {
+        "name": "disconnect",
+        "description": "Disconnect a Member from a Voice Channel",
+        "dm_permission": "false",
+        options: [
+            {
+                "name": "target",
+                "description": "Member to disconnect",
+                "type": 6,
+                "required": "true"
+            },
+            {
+                "name": "reason",
+                "description": "Disconnect reason",
+                "type": 3,
+                "max_length": 200,
                 "required": "false"
             }
         ]
@@ -130,19 +204,11 @@ const commands = [
         ]
     },
     {
-        "name": "google",
-        "description": "Generate Google and LMGTFY Links",
+        "name": "faq",
+        "description": "USF Bot Frequently Asked Questions",
         "dm_permission": "true",
         "integration_types": [0, 1],
-        "contexts": [0, 1, 2],
-        options: [
-            {
-                "name": "text",
-                "description": "Google that for you",
-                "type": 3,
-                "required": "true"
-            }
-        ]
+        "contexts": [0, 1, 2]
     },
     {
         "name": "help",
@@ -152,8 +218,22 @@ const commands = [
         "contexts": [0, 1, 2]
     },
     {
+        "name": "highlow",
+        "description": "Play a game of highlow",
+        "dm_permission": "false",
+        "integration_types": [0, 1],
+        "contexts": [0, 1, 2],
+    },
+    {
         "name": "info",
         "description": "Get informations about the bot",
+        "dm_permission": "true",
+        "integration_types": [0, 1],
+        "contexts": [0, 1, 2]
+    },
+    {
+        "name": "invite",
+        "description": "Invite the Bot to your servers!",
         "dm_permission": "true",
         "integration_types": [0, 1],
         "contexts": [0, 1, 2]
@@ -173,6 +253,7 @@ const commands = [
                 "name": "reason",
                 "description": "Kick reason",
                 "type": 3,
+                "max_length": 200,
                 "required": "false"
             }
         ]
@@ -192,6 +273,7 @@ const commands = [
                 "name": "reason",
                 "description": "Reason of the lock",
                 "type": 3,
+                "max_length": 200,
                 "required": "false"
             }
         ]
@@ -206,30 +288,6 @@ const commands = [
                 "description": "IP address of the Minecraft server (without port)",
                 "type": 3,
                 "required": "true"
-            },
-            {
-                "name": "edition",
-                "description": "The edition of the server",
-                "type": 3,
-                "required": "true",
-                choices: [
-                    {
-                        "name": "Java Edition",
-                        "type": 3,
-                        "value": "java"
-                    },
-                    {
-                        "name": "Bedrock/Education Edition",
-                        "type": 3,
-                        "value": "bedrock"
-                    }
-                ]
-            },
-            {
-                "name": "port",
-                "description": "Port of the Minecraft Server (optional)",
-                "type": 3,
-                "required": "false",
             }
         ]
     },
@@ -253,12 +311,39 @@ const commands = [
                 "name": "reason",
                 "description": "Moderation Reason",
                 "type": 3,
+                "max_length": 200,
                 "required": "false"
             },
             {
                 "name": "notify",
                 "description": "Should the bot notify the user via this chat?",
                 "type": 5,
+                "required": "false"
+            }
+        ]
+    },
+    {
+        "name": "move",
+        "description": "Move a Member to another Voice Channel",
+        "dm_permission": "false",
+        options: [
+            {
+                "name": "target",
+                "description": "Member to move",
+                "type": 6,
+                "required": "true"
+            },
+            {
+                "name": "channel",
+                "description": "Channel where to move the Member",
+                "type": 7,
+                "required": "true"
+            },
+            {
+                "name": "reason",
+                "description": "Move reason",
+                "type": 3,
+                "max_length": 200,
                 "required": "false"
             }
         ]
@@ -364,41 +449,79 @@ const commands = [
         "contexts": [0, 1, 2],
         options: [
             {
-                "name": "reported",
+                "name": "type",
                 "description": "What are you reporting? choose an option",
                 "type": 3,
                 "required": "true",
                 choices: [
                     {
-                        "name": "An User",
+                        "name": "Discord User",
                         "type": 3,
                         "value": "user"
                     },
                     {
-                        "name": "Bot Function",
+                        "name": "Bot Issue/Bug",
                         "type": 3,
                         "value": "bot"
                     }
                 ]
             },
             {
-                "name": "proof",
-                "description": "Send us proof about your report",
-                "type": 11,
-                "required": "false"
+                "name": "description",
+                "description": "Informations about your report",
+                "type": 3,
+                "required": "true"
             },
             {
-                "name": "other-info",
-                "description": "Other informations about your report",
-                "type": 3,
+                "name": "proof",
+                "description": "Proof about your report",
+                "type": 11,
                 "required": "false"
             }
         ]
     },
     {
+        "name": "role",
+        "description": "Get Role Informations",
+        "dm_permission": "false",
+        options: [
+            {
+                "name": "target",
+                "description": "Target Role to check",
+                "type": 8,
+                "required": "true"
+            }
+        ]
+    },
+    {
+        "name": "rps",
+        "description": "Play Rock Paper Scissors with the bot",
+        "dm_permission": "false",
+        "integration_types": [0, 1],
+        "contexts": [0, 1, 2]
+    },
+    {
         "name": "say",
         "description": "Say something in chat through the bot",
-        "dm_permission": "false"
+        "dm_permission": "false",
+        "integration_types": [0, 1],
+        "contexts": [0, 1, 2]
+    },
+    {
+        "name": "search",
+        "description": "Generate Search Links",
+        "dm_permission": "true",
+        "integration_types": [0, 1],
+        "contexts": [0, 1, 2],
+        options: [
+            {
+                "name": "text",
+                "description": "Search that for you",
+                "type": 3,
+                "max_length": 100,
+                "required": "true"
+            }
+        ]
     },
     {
         "name": "server",
@@ -426,6 +549,7 @@ const commands = [
                 "name": "reason",
                 "description": "Moderation Reason",
                 "type": 3,
+                "max_length": 200,
                 "required": "false"
             },
             {
@@ -438,36 +562,36 @@ const commands = [
     },
     {
         "name": "suggestion",
-        "description": "Suggest us something for the USF Bot",
+        "description": "Suggest Commands or Functions for the Bot",
         "dm_permission": "true",
         "integration_types": [0, 1],
         "contexts": [0, 1, 2],
         options: [
             {
                 "name": "type",
-                "description": "What you want to suggest",
+                "description": "Suggestion Type",
                 "type": 3,
                 "required": "true",
                 choices: [
                     {
-                        "name": "Command",
+                        "name": "Add Command",
                         "type": 3,
-                        "value": "command"
+                        "value": "addCmd"
                     },
                     {
-                        "name": "Option",
+                        "name": "Update Command",
                         "type": 3,
-                        "value": "option"
+                        "value": "updateCmd"
                     },
                     {
-                        "name": "Command Changes",
+                        "name": "Add Function",
                         "type": 3,
-                        "value": "change"
+                        "value": "addFunc"
                     },
                     {
-                        "name": "Function",
+                        "name": "Update Function",
                         "type": 3,
-                        "value": "function"
+                        "value": "updateFunc"
                     }
                 ]
             },
@@ -500,6 +624,7 @@ const commands = [
                 "name": "reason",
                 "description": "Reason of the timeout",
                 "type": 3,
+                "max_length": 200,
                 "required": "false"
             }
         ]
@@ -573,6 +698,27 @@ const commands = [
                 "name": "reason",
                 "description": "Reason of the moderation",
                 "type": 3,
+                "max_length": 200,
+                "required": "false"
+            }
+        ]
+    },
+    {
+        "name": "undeafen",
+        "description": "Undeafen a Member",
+        "dm_permission": "false",
+        options: [
+            {
+                "name": "target",
+                "description": "Member to undeafen",
+                "type": 6,
+                "required": "true"
+            },
+            {
+                "name": "reason",
+                "description": "Undeafen reason",
+                "type": 3,
+                "max_length": 200,
                 "required": "false"
             }
         ]
@@ -592,6 +738,27 @@ const commands = [
                 "name": "reason",
                 "description": "Reason of the unlock",
                 "type": 3,
+                "max_length": 200,
+                "required": "false"
+            }
+        ]
+    },
+    {
+        "name": "unmute",
+        "description": "Unmute a Member",
+        "dm_permission": "false",
+        options: [
+            {
+                "name": "target",
+                "description": "Member to unmute",
+                "type": 6,
+                "required": "true"
+            },
+            {
+                "name": "reason",
+                "description": "Unmute reason",
+                "type": 3,
+                "max_length": 200,
                 "required": "false"
             }
         ]
@@ -611,6 +778,46 @@ const commands = [
             }
         ]
     },
+    {
+        "name": "vmute",
+        "description": "Voice Mute a Member",
+        "dm_permission": "false",
+        options: [
+            {
+                "name": "target",
+                "description": "Member to voice mute",
+                "type": 6,
+                "required": "true"
+            },
+            {
+                "name": "reason",
+                "description": "voice mute reason",
+                "type": 3,
+                "max_length": 200,
+                "required": "false"
+            }
+        ]
+    },
+    {
+        "name": "vunmute",
+        "description": "Voice Unmute a Member",
+        "dm_permission": "false",
+        options: [
+            {
+                "name": "target",
+                "description": "Member to voice unmute",
+                "type": 6,
+                "required": "true"
+            },
+            {
+                "name": "reason",
+                "description": "voice unmute reason",
+                "type": 3,
+                "max_length": 200,
+                "required": "false"
+            }
+        ]
+    }
 ];
 console.log(commands);
 const usfcmds = [

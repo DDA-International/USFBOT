@@ -8,7 +8,8 @@ module.exports = {
         .setDMPermission(false),
     async execute(interaction) {
         await interaction.deferReply({ ephemeral: true })
-        const target = interaction.options.getMember('target')
+        const member = interaction.options.getMember('target')
+        const target = await interaction.guild.members.fetch(member.user.id)
         const reason = interaction.options.getString('reason') ?? 'No Reason Provided'
         if (!(interaction.member.permissions.has(PermissionsBitField.Flags.ModerateMembers))) {
             return interaction.editReply({ content: 'You do not have the required permission to execute this action : `ModerateMembers`', ephemeral: true })
@@ -27,7 +28,9 @@ module.exports = {
             return interaction.editReply({ content: 'Action Executed Successfully', ephemeral: true })
         } catch (error) {
             console.error(error)
-            return interaction.editReply({ content: `There was an error while trying to execute this action\n${error}`, ephemeral: true })
+            const { erbed } = require('../embeds/embeds.js')
+            erbed.setFooter({ text: `${error}`})
+            return interaction.editReply({ embeds: [erbed] })
         }
     }
 }

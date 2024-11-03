@@ -8,7 +8,8 @@ module.exports = {
         .setDMPermission(false),
     async execute(interaction) {
         await interaction.deferReply({ ephemeral: true })
-        const target = interaction.options.getMember('target')
+        const member = interaction.options.getMember('target')
+        const target = await interaction.guild.members.fetch(member.user.id)
         const reason = interaction.options.getString('reason') ?? `No Reason Provided`
         let undeafened = new EmbedBuilder();
         if (interaction.member.permissions.has(PermissionsBitField.Flags.DeafenMembers)) {
@@ -22,8 +23,9 @@ module.exports = {
                 return interaction.editReply({ embeds: [undeafened] })
             } catch (error) {
                 console.error(error)
-                undeafened.setColor(0xff0000).setDescription(`An unknown error occurred while executing this command!\n${error}`);
-                return interaction.editReply({ embeds: [undeafened] })
+                const { erbed } = require('../embeds/embeds.js')
+                erbed.setFooter({ text: `${error}`})
+                return interaction.editReply({ embeds: [erbed] })
             }
         } else {
             undeafened.setColor(0xff0000).setDescription('You are missing the required permission to run this command: `DeafenMembers`');

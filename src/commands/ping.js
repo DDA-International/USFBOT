@@ -4,8 +4,8 @@ module.exports = {
     data: new SlashCommandBuilder()
     	.setName('ping').setDescription('Return the ping of the bot').setDMPermission(true),
     async execute(interaction) {
-        const pong = interaction.client.ws.ping;
         const sent = await interaction.reply({ content: 'Pinging...', fetchReply: true });
+        const pong = interaction.client.ws.ping;
         const pingEmbed = new EmbedBuilder()
             .setColor(0x00ffff)
             .setTitle('Pong! 🏓')

@@ -9,7 +9,8 @@ module.exports = {
     async execute(interaction) {
         await interaction.deferReply({ ephemeral: true });
         if (interaction.member.permissions.has(PermissionsBitField.Flags.KickMembers)) {
-            const target = interaction.options.getMember('target');
+            const member = interaction.options.getMember('target');
+            const target = await interaction.guild.members.fetch(member.user.id)
             if (target.permissions.has(PermissionsBitField.Flags.KickMembers)) {
                 return interaction.editReply({content: 'You don\'t have the permission to kick this user!', ephemeral: true});
             }
@@ -30,7 +31,12 @@ module.exports = {
             }
             target.kick(`${interaction.user.username}: ${reason}`)
             	.then(interaction.editReply({embeds: [kickEmbed], ephemeral: true}))
-            	.catch(console.error);
+            	.catch(error => {
+                    console.error(error);
+                    const { erbed } = require('../embeds/embeds.js')
+                    erbed.setFooter(`${error}`)
+                    return interaction.editReply({ embeds: [erbed] })
+                });
         } else {
             interaction.editReply({content: 'You are missing the `KickMembers` Permission', ephemeral: true});
         }

@@ -8,7 +8,8 @@ module.exports = {
         .setDMPermission(false),
     async execute(interaction) {
         await interaction.deferReply({ ephemeral: true })
-        const target = interaction.options.getMember('target')
+        const member = interaction.options.getMember('target')
+        const target = await interaction.guild.members.fetch(member.user.id)
         const reason = interaction.options.getString('reason') ?? 'No reason provided'
         let banEmbed = new EmbedBuilder();
         if (!(interaction.member.permissions.has(PermissionsBitField.Flags.BanMembers))) {
@@ -36,7 +37,9 @@ module.exports = {
                 return interaction.editReply({ embeds: [banEmbed] })
             }).catch(error => {
                 console.error(error)
-                return interaction.editReply({ content: `An Error Occurred!\n${error}` })
+                const { erbed } = require('../embeds/embeds.js')
+                erbed.setFooter({ text: `${error}`})
+                return interaction.editReply({ embeds: [erbed] })
             });
     }
 }

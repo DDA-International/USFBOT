@@ -2,7 +2,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { ActivityType, Client, Collection, EmbedBuilder, Events, GatewayIntentBits } = require('discord.js');
 const { token, bannedUsers, bannedGuilds, discord, joinCh, leaveCh } = require('./config.json');
-const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.DirectMessages], presence: {status: 'ONLINE', activities: [{type: ActivityType.Playing, name: '/info'}]} });
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildVoiceStates, GatewayIntentBits.DirectMessages], presence: {status: 'ONLINE', activities: [{type: ActivityType.Playing, name: '/info'}]} });
 //
 client.cooldowns = new Collection();
 client.commands = new Collection();
@@ -17,8 +17,6 @@ for (const folder of commandFolders) {
 		const command = require(filePath);
 		if ('data' in command && 'execute' in command) {
 			client.commands.set(command.data.name, command);
-		} else {
-			console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
 		}
 	}
 }
@@ -28,16 +26,12 @@ client.once(Events.ClientReady, () => {
 });
 client.on(Events.InteractionCreate, async interaction => {
     if (bannedUsers.includes(interaction.user.id)) {
-        const userNotAllowed = new EmbedBuilder()
-        	.setTitle('You are not allowed to use this Bot!')
-        	.setDescription(`Hello ${interaction.user},\nWe are sorry but you are not allowed to use the USF Bot.\n\nThis usually happens when you break our [Terms of Service](https://github.com/USF-Team/USFBOT#terms-of-service)\nIf you believe this is an error, you can appeal in our [Discord Server](${discord}).`);
-            return interaction.reply({embeds: [userNotAllowed], ephemeral: true});
+        const { userNotAllowed } = require('./src/embeds/embeds.js')
+        return interaction.reply({embeds: [userNotAllowed], ephemeral: true});
     }
     if (interaction.guild) {
         if (bannedGuilds.includes(interaction.guild.id)) {
-            const guildNotAllowed = new EmbedBuilder()
-            	.setTitle('This guild is not allowed to use this Bot!')
-            	.setDescription(`Hello ${interaction.user},\nWe are sorry but this guild is not allowed to use the USF Bot.\n\nThis usually happens when guild members break our [Terms of Service](https://github.com/USF-Team/USFBOT#terms-of-service)\nIf you believe this is an error and you are the guild owner, you can appeal in our [Discord Server](${discord}).`);
+            const { guildNotAllowed } = require('./src/embeds/embeds.js')
             return interaction.reply({embeds: [guildNotAllowed], ephemeral: true});
         }
     }
@@ -70,19 +64,17 @@ client.on(Events.InteractionCreate, async interaction => {
         await command.execute(interaction);
     } catch (error) {
         console.error(error);
-        const erbed = new EmbedBuilder()
-            .setColor(0xff0000)
-        	.setTitle('We\'re sorry, an error occurred!')
-        	.setDescription(`Please wait a few seconds and if the error persists, please contact the Development Team in our [Discord Server](${discord})`);
+        const { erbed } = require('./src/embeds/embeds.js')
+        erbed.setFooter(`${error}`)
         if (interaction.replied) {
-            await interaction.editReply({ embeds: [erbed], ephemeral: true });
+            interaction.editReply({ embeds: [erbed], ephemeral: true })
         } else {
-            await interaction.reply({ embeds: [erbed], ephemeral: true });
+            interaction.reply({ embeds: [erbed], ephemeral: true })
         }
     }
 });
 client.on(Events.GuildCreate, guild => {
-    const joinch = client.channels.cache.get(joinCh);
+    const joinch = client.channels.cache.get(joinCh)
     const joinembed = new EmbedBuilder()
     	.setColor(0x00ff00)
     	.setTitle('Joined a new Guild')
@@ -99,8 +91,8 @@ client.on(Events.GuildCreate, guild => {
     }
     joinch.send({embeds:[joinembed]});
     if (bannedGuilds.includes(guild.id)) {
-        guild.leave();
-        joinch.send('This Guild is blacklisted. The Bot left the guild.');
+        guild.leave()
+        joinch.send('This Guild is blacklisted. The Bot left the guild.')
     }
 });
 client.on(Events.GuildDelete, async guild => {
@@ -118,11 +110,11 @@ client.on(Events.GuildDelete, async guild => {
     	    )
     	    .setTimestamp();
         if (guild.icon) {
-            leaveEmbed.setThumbnail(`${guild.iconURL({ size: 2048 }) }`);
+            leaveEmbed.setThumbnail(`${guild.iconURL({ size: 2048 }) }`)
         }
-        leavech.send({ embeds: [leaveEmbed] });
+        leavech.send({ embeds: [leaveEmbed] })
     }
 });
 process.on('unhandledRejection', console.error)
 process.on('uncaughtException', console.error)
-client.login(token);
+client.login(token)

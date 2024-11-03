@@ -1,104 +1,64 @@
 const { EmbedBuilder, SlashCommandBuilder } = require('discord.js');
-const { getStatus } = require("mc-server-status");
-const mcs = require('node-mcstatus');
+const axios = require('axios');
 const { discord } = require('../../config.json');
+const fs = require('fs')
 //
 module.exports = {
     data: new SlashCommandBuilder()
     	.setName('mcstatus').setDescription('Get the status of a Minecraft Server')
     	.addStringOption(option=>option.setName('address').setDescription('IP Address of the Minecraft server (without port)').setRequired(true))
-        .addStringOption(option=>option.setName('port').setDescription('Port of the Minecraft Server(optional)'))
-        .addStringOption(option=>option.setName('edition').setDescription('The edition of the server').setRequired(true).addChoices(
-            {name: "Java Edition", value: "java"},
-            {name: "Bedrock/Education Edition", value: "bedrock"},
-        ))
     	.setDMPermission(false),
     async execute(interaction) {
         await interaction.deferReply();
         const host = interaction.options.getString('address');
-        if (host.includes('aternos.me')||host.includes('exaroton.me')) {
-            return interaction.editReply('https://usf.instatus.com/it-it/clpk5xl9l69900banb6k6cb9tk');
+        const getStatus = async () => {
+            try {
+                const response = await axios.get(`https://mcapi.xdefcon.com/server/${host}/full/json`);
+                const status = response.data;
+                return status;
+            } catch (error) {
+                console.error('Error during status fetch:', error);
+                interaction.editReply({ content: `An error occurred while fetching the status of the requested server!\n${error}\nReport to developers through our [Discord Server]${discord}\n\nIs the server an Aternos/exaroton server? Please check [this page](https://usf.instatus.com/clpk5xl9l69900banb6k6cb9tk)`, ephemeral: true });
+            }
         }
-        const status = await getStatus(`${host}`);
-        const port = interaction.options.getString('port') || '25565';
-        const ver = interaction.options.getString('edition');
-        const options = { query: true };
-        if (ver==='java') {
-            mcs.statusJava(host, port, options)
-                .then(async (result) => {
-                    if (result.online) {
-                        const sembed = new EmbedBuilder()
-        	                .setTitle(`${host.toLowerCase()}`)
-                            .setDescription(`${result.motd.clean}`)
-        	                .addFields(
-                                { name: 'Players', value: `${status.players.online}/${status.players.max}`, inline: true},
-                                { name: 'Version', value: `${status.version.name}`, inline: true},
-                                { name: 'Ping', value: `${status.ping}`},
-                            )
-        	                .setFooter({ text: `Requested by ${interaction.user.username}`, iconURL: `${interaction.user.displayAvatarURL({size:32})}`})
-        	                .setTimestamp();
-                        let rep = await interaction.editReply({ embeds: [sembed] });
-                        if (status.players.max===0) {
-                            sembed.setColor(0xff0000);
-                            sembed.addFields(
-                                {name: 'Status', value: 'OFFLINE'},
-                            );
-                            rep.edit({embeds: [sembed]});
-                        } else {
-                            sembed.setColor(0x00ff00);
-                            sembed.addFields(
-                                {name: 'Status', value: 'ONLINE'},
-                            );
-                            rep.edit({ embeds: [sembed] });
-                        }
-                    } else {
-                        const soffline = new EmbedBuilder()
-                            .setTitle(`${host.toLowerCase()}`)
-                            .setDescription(`The Server is either offline or does not exist and we cannot get results from it`);
-                        interaction.editReply({embeds: [soffline]});
+        const status = await getStatus();
+        if (status.serverStatus==='offline' || status.maxplayers===0) {
+            const oembed = new EmbedBuilder()
+                .setColor(0xff0000)
+                .setTitle(`${host.toLowerCase()} [OFFLINE]`)
+                .setDescription(`It looks like there was an error while fetching the status of the requested server! **Common causes:**\n1. The server is offline\n2. The server is not reachable\n3. The server is not a Minecraft server\n4. The server is not using the default port\n5. The server is affected by the Aternos/exaroton issue. [Read more](https://usf.instatus.com/clpk5xl9l69900banb6k6cb9tk)`);
+            return interaction.editReply({ embeds: [oembed] })
+        }
+        const sembed = new EmbedBuilder()
+            .setColor(0x00ff00)
+            .setTitle(`${host.toLowerCase()} [ONLINE]`)
+            .addFields(
+                { name: 'Players', value: `${status.players}/${status.maxplayers}`, inline: true },
+                { name: 'Version', value: `${status.version}`, inline: true },
+                { name: 'Protocol', value: `${status.protocol}`, inline: true },
+            )
+            .setFooter({ text: `Requested by ${interaction.user.username}`, iconURL: `${interaction.user.displayAvatarURL({size:32})}`})
+            .setTimestamp();
+        if (status.motd.extra) {
+             let desc = ''
+            if (!(status.motd.extra[1])) {
+                for (let i=0; i<status.motd.extra[0].extra.length; i++) {
+                    desc+=status.motd.extra[0].extra[i].text;
+                }
+            } else {
+                if (!(status.motd.extra[1].extra)) {
+                    desc = status.motd.text;
+                } else {
+                    for (let i=0; i<status.motd.extra[1].extra.length; i++) {
+                        desc+=status.motd.extra[1].extra[i].text;
                     }
-                }).catch((error) =>{
-                    console.log(error);
-                    interaction.editReply({content: 'There was an error while trying to execute this command!'});
-                });
+                }
+            }
+            if (!desc) { desc = 'No description found' }
+            sembed.setDescription(`${desc}`)
         } else {
-            mcs.statusBedrock(host, port)
-                .then(async (resultb) => {
-                    if (resultb.online) {
-                        const sembedb = new EmbedBuilder()
-        	                .setTitle(`${host.toLowerCase()}`)
-                            .setDescription(`${resultb.motd.clean}`)
-        	                .addFields(
-                                { name: 'Players', value: `${status.players.online}/${status.players.max}`, inline: true},
-                                { name: 'Version', value: `${status.version.name}`, inline: true},
-                                { name: 'Ping', value: `${status.ping}`},
-                            )
-        	                .setFooter({ text: `Requested by ${interaction.user.username}`, iconURL: `${interaction.user.displayAvatarURL({size:32})}`})
-        	                .setTimestamp();
-                        let repb = await interaction.editReply({embeds: [sembedb]});
-                        if (status.players.max===0) {
-                            sembedb.setColor(0xff0000);
-                            sembedb.addFields(
-                                {name: 'Status', value: 'OFFLINE'},
-                            );
-                            rep.edit({embeds: [sembedb]});
-                        } else {
-                            sembedb.setColor(0x00ff00);
-                            sembedb.addFields(
-                                {name: 'Status', value: 'ONLINE'},
-                            );
-                            rep.edit({ embeds: [sembedb] });
-                        }
-                    } else {
-                        const sofflineb = new EmbedBuilder()
-                            .setTitle(`${host.toLowerCase()}`)
-                            .setDescription(`The Server is either offline or does not exist and we cannot get results from it`);
-                        interaction.editReply({embeds: [sofflineb]});
-                    }
-                })
-                .catch((error) => {
-                    interaction.editReply(`There was an error while trying to execute this command!`);
-                });
+            sembed.setDescription(`${status.motd.text}`)
         }
+        interaction.editReply({ embeds: [sembed] });
     },
 };

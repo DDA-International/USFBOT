@@ -12,12 +12,16 @@ module.exports = {
             const member = interaction.options.getUser('target');
             const reason = interaction.options.getString('reason') ?? `${interaction.user.username} : No reason provided`;
             interaction.guild.bans.fetch(`${member.id}`)
-                .then(interaction.guild.members.unban(`${member.id}`, `${interaction.user.username}: ${reason}`))
-                .catch(async error => {
+                .then(async int => {
+                    interaction.guild.members.unban(`${member.id}`, `${reason}`)
+                    return interaction.editReply({content: 'User successfully unbanned', ephemeral: true})
+                })
+                .catch(error => {
                     console.log(error)
-                    return interaction.editReply({content: 'The user is not banned!', ephemeral: true})
+                    const { erbed } = require('../embeds/embeds.js')
+                    erbed.setFooter({ text: `${error}`})
+                    return interaction.editReply({ embeds: [erbed] })
                 });
-            return interaction.editReply({content: 'User successfully unbanned', ephemeral: true})
         } else {
             return interaction.editReply({content: 'You are not permitted to perform this action', ephemeral: true})
         }

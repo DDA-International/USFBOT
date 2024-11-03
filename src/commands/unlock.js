@@ -14,14 +14,20 @@ module.exports = {
             }
             let channel = interaction.options.getChannel('channel') ?? interaction.channel;
             let reason = interaction.options.getString('reason') ?? 'No reason provided';
-            const UnlockMessage = new EmbedBuilder()
-            	.setColor(0x00ff00)
-            	.setTitle('This channel has been unlocked!')
-            	.setDescription(`Unlocked for reason: ${reason}`)
-            	.setTimestamp();
-            channel.permissionOverwrites.edit(interaction.guild.id, { SendMessages: true, AddReactions: true, SendMessagesInThreads: true, CreatePublicThreads: true, CreatePrivateThreads: true });
-            interaction.editReply({content: `Successfully unlocked ${channel}`, ephemeral: true})
-            return channel.send({embeds: [UnlockMessage]});
+            try {
+                const UnlockMessage = new EmbedBuilder()
+                    .setColor(0x00ff00)
+                    .setTitle('This channel has been unlocked!')
+                    .setDescription(`Unlocked for reason: ${reason}`)
+                    .setTimestamp();
+                channel.permissionOverwrites.edit(interaction.guild.id, { SendMessages: true, AddReactions: true, SendMessagesInThreads: true, CreatePublicThreads: true, CreatePrivateThreads: true });
+                interaction.editReply({content: `Successfully unlocked ${channel}`, ephemeral: true})
+                return channel.send({embeds: [UnlockMessage]});
+            } catch(e) {
+                const { erbed } = require('../embeds/embeds.js')
+                erbed.setFooter({ text: `${error}`})
+                return interaction.editReply({ embeds: [erbed] })
+            }
         } else {
             return interaction.editReply({content: `You don't have the required permission to run this command!`, ephemeral: true});
         }

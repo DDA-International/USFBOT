@@ -1,4 +1,4 @@
-const { EmbedBuilder, SlashCommandBuilder, PermissionsBitField } = require('discord.js')
+const { ChannelType, EmbedBuilder, SlashCommandBuilder, PermissionsBitField } = require('discord.js')
 //
 module.exports = {
     data: new SlashCommandBuilder()
@@ -9,10 +9,16 @@ module.exports = {
         .setDMPermission(false),
     async execute(interaction) {
         await interaction.deferReply({ ephemeral: true })
-        const target = interaction.options.getMember('target')
+        const member = interaction.options.getMember('target')
+        const target = await interaction.guild.members.fetch(member.user.id)
         const channel = interaction.options.getChannel('channel')
-        const reason = interaction.options.getString('reason') ?? `No Reason Provided`
         let moved = new EmbedBuilder();
+        if (channel.type !== ChannelType.GuildVoice) {
+            
+            moved.setColor(0xff0000).setDescription(`The channel must be a Voice Channel!`);
+            return interaction.editReply({ embeds: [moved] })
+        }
+        const reason = interaction.options.getString('reason') ?? `No Reason Provided`
         if (interaction.member.permissions.has(PermissionsBitField.Flags.MoveMembers)) {
             try {
                 if (!(target.voice.channel)) {
