@@ -2,11 +2,11 @@
 The USF Bot is a Multipurpose Discord Bot created with the scope of helping every Servers with Moderation and Management, making some actions faster with Utility functions and Entertain the Community with Fun features! The Bot is 100% free and features we add are mostly suggested by our Community Members and Members in servers where the Bot is present.
 
 ## Informations
-[Commands](https://github.com/USF-Team/USFBOT/blob/main/Commands.md)
+[Commands](https://github.com/DDA-International/USFBOT/blob/main/Commands.md)
 
-[Organization Website](https://usfteam.pages.dev/)
+[Organization Website](https://dda.pages.dev/)
 
-[Status Page](https://usf.instatus.com/)
+[Status Page](https://dda.instatus.com/)
 
 ### Suggestions
 Update Coming Soon
@@ -14,17 +14,17 @@ Update Coming Soon
 Update Coming Soon
 
 ## Contacts
-[Discord Server](https://dsc.gg/usfteam)
+[Discord Server](https://dsc.gg/ddateam)
 
-[Email](mailto:usfdiscordteam@gmail.com)
+[Email](mailto:dda.discordteam@gmail.com)
 
 [Organization Representative Email](mailto:robertbelotti06@gmail.com)
 
 ## Help & Support
 
-[Discord](https://dsc.gg/usfteam)
+[Discord](https://dsc.gg/ddateam)
 
-[Email](mailto:usfdiscordteam@gmail.com)
+[Email](mailto:dda.discordteam@gmail.com)
 
 ## Legal
 `License Type:` GNU GPL3
